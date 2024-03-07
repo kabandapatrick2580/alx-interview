@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""This function generates Pascal's triangle up to 
-    the specified number of rows."""
+"""This fn generates Pascal's tri up to the specfd number of rows."""
 
 
 def pascal_triangle(p):
