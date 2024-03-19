@@ -1,34 +1,39 @@
 #!/usr/bin/python3
+"""
+Module for determining if all boxes can be unlocked.
+"""
+
+
 def canUnlockAll(boxes):
     """
-    Determines if all the boxes can be opened.
+    Determine if all boxes can be opened.
 
     Args:
-        boxes (list of lists): A list of lists representing locked boxes.
+        boxes (list of lists): A list of boxes where each box
+                               may contain keys to other boxes.
 
     Returns:
         bool: True if all boxes can be opened, False otherwise.
     """
-    # Initialize a set to keep track of the boxes that have been visited
-    visited = set()
+    # Set to keep track of opened boxes
+    the_opened_boxes = set()
 
-    # Initialize a stack to keep track of boxes that need to be visited
-    stack = [0]  # Start with the first box
+    # Initially, the first box is opened
+    the_opened_boxes.add(0)
 
-    # While there are boxes to visit
-    while stack:
-        # Pop a box from the stack
-        current_box = stack.pop()
+    # List to keep track of keys to be checked
+    the_keys_to_check = boxes[0]
 
-        # Mark the current box as visited
-        visited.add(current_box)
+    # Loop until there are no more keys to check
+    while the_keys_to_check:
+        # Get the next key
+        key = the_keys_to_check.pop()
 
-        # Check if the current box contains keys to other boxes
-        for key in boxes[current_box]:
-            # If the key opens a box that hasn't been visited yet
-            if key < len(boxes) and key not in visited:
-                # Add the box to the stack to be visited later
-                stack.append(key)
+        # Check if the key opens a new box
+        if key < len(boxes) and key not in the_opened_boxes:
+            # Open the box and add its keys to the list of keys to check
+            the_opened_boxes.add(key)
+            the_keys_to_check.extend(boxes[key])
 
-    # Check if all boxes have been visited
-    return len(visited) == len(boxes)
+    # Check if all boxes have been opened
+    return len(the_opened_boxes) == len(boxes)
