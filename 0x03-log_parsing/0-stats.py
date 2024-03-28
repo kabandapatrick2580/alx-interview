@@ -3,12 +3,29 @@ import sys
 
 
 def print_stats(total_size, status_counts):
+    """
+    Print statistics including total file size and status code counts.
+
+    Args:
+        total_size (int): Total size of files.
+        status_counts (dict): Dictionary containing status code counts.
+    """
     print("File size:", total_size)
     for code, count in sorted(status_counts.items()):
         print(f"{code}: {count}")
 
 
 def parse_line(line):
+    """
+    Parse a log line and extract IP, status code, and file size.
+
+    Args:
+        line (str): Log line to parse.
+
+    Returns:
+        tuple or None: Tuple containing IP address, status code,
+        and file size if parsing is successful, otherwise None.
+    """
     parts = line.split()
     if len(parts) < 9:
         return None
@@ -19,6 +36,10 @@ def parse_line(line):
 
 
 def main():
+    """
+    Main function to read log data from stdin,
+    compute statistics, and print results.
+    """
     total_size = 0
     status_counts = {
         200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
@@ -33,3 +54,7 @@ def main():
                 print_stats(total_size, status_counts)
     except KeyboardInterrupt:
         print_stats(total_size, status_counts)
+
+
+if __name__ == "__main__":
+    main()
