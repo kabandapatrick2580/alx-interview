@@ -47,8 +47,12 @@ def solve_nqueens_recursive(board, col, board_size, solutions):
     """
     # If all queens are placed then add the solution
     if col == board_size:
-        solutions.append([board[i][j] for i in range(board_size)
-                          for j in range(board_size)])
+        solution = []
+        for i in range(board_size):
+            for j in range(board_size):
+                if board[i][j] == 1:
+                    solution.append([i, j])
+        solutions.append(solution)
         return
 
     # Consider this column and try placing this queen in all rows
@@ -79,8 +83,7 @@ def solve_nqueens(board_size):
     solve_nqueens_recursive(board, 0, board_size, solutions)
 
     for sol in solutions:
-        print([[i, j] for i in range(board_size) for j in range(board_size)
-               if sol[i * board_size + j] == 1])
+        print(sol)
 
 
 if __name__ == "__main__":
