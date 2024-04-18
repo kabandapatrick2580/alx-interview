@@ -1,56 +1,56 @@
 #!/usr/bin/node
-const request = require('request');
+const https = require('https'); // Use https for secure communication
+const request = require('request'); // Assuming request is installed (npm install request)
 
-// Movie ID provided as the first positional argument
-const movieId = process.argv[2];
+const baseUrl = 'https://intranet.alxswe.com/rltoken/gh_NaSUk9QlXHVoACFU-tg/films/';
+const movieId = process.argv[2]; // Assuming movie ID is the second argument
 
-// URL of the Star Wars API
-const apiUrl = `https://intranet.alxswe.com/swapi/api/films/${movieId}/`;
+function getCharacterNames(movieId) {
+  const url = `${baseUrl}${movieId}`;
 
-// Make a GET request to the API endpoint to fetch movie details
-request(apiUrl, (error, response, body) => {
-  if (error) {
-    console.error('Error:', error);
-    return;
-  }
+  request(url, (error, response, body) => {
+    if (error) {
+      console.error('Error fetching movie data:', error);
+      return;
+    }
 
-  if (response.statusCode !== 200) {
-    console.error('Error:', `Failed to fetch movie details. Status code: ${response.statusCode}`);
-    return;
-  }
+    if (response.statusCode !== 200) {
+      console.error('API request failed:', response.statusCode);
+      return;
+    }
 
-  try {
-    // Parse the JSON response body
-    const movieData = JSON.parse(body);
+    try {
+      const data = JSON.parse(body);
+      const characters = data.characters;
 
-    // Extract the characters array from the movie data
-    const characters = movieData.characters;
+      characters.forEach(characterUrl => {
+        request(characterUrl, (characterError, characterResponse, characterBody) => {
+          if (characterError) {
+            console.error('Error fetching character data:', characterError);
+            return;
+          }
 
-    // Iterate over each character and print their name
-    characters.forEach(characterUrl => {
-      request(characterUrl, (error, response, body) => {
-        if (error) {
-          console.error('Error:', error);
-          return;
-        }
+          if (characterResponse.statusCode !== 200) {
+            console.error('API request failed (character):', characterResponse.statusCode);
+            return;
+          }
 
-        if (response.statusCode !== 200) {
-          console.error('Error:', `Failed to fetch character details. Status code: ${response.statusCode}`);
-          return;
-        }
-
-        try {
-          // Parse the JSON response body
-          const characterData = JSON.parse(body);
-          
-          // Print the character's name
-          console.log(characterData.name);
-        } catch (error) {
-          console.error('Error:', error);
-        }
+          try {
+            const characterData = JSON.parse(characterBody);
+            console.log(characterData.name);
+          } catch (parseError) {
+            console.error('Error parsing character data:', parseError);
+          }
+        });
       });
-    });
-  } catch (error) {
-    console.error('Error:', error);
-  }
-});
+    } catch (parseError) {
+      console.error('Error parsing movie data:', parseError);
+    }
+  });
+}
+
+if (!movieId) {
+  console.error('Please provide a movie ID as the first argument.');
+} else {
+  getCharacterNames(movieId);
+}
