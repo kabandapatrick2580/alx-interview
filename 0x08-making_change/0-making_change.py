@@ -26,10 +26,11 @@ def makeChange(coins, total):
     min_coins = [float('inf')] * (total + 1)
     min_coins[0] = 0
 
-    for coin_value in coins:
-        for amount in range(coin_value, total + 1):
-            min_coins[amount] = min(min_coins[amount],
-                                    min_coins[amount - coin_value] + 1)
+    for amount in range(1, total + 1):
+        for coin_value in coins:
+            if amount - coin_value >= 0:
+                min_coins[amount] = min(min_coins[amount],
+                                        min_coins[amount - coin_value] + 1)
 
     if min_coins[total] == float('inf'):
         return -1
